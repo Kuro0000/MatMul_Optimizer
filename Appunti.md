@@ -5,6 +5,7 @@
 Il benchmark del prodotto tra matrici confronta un ciclo standard con lo stesso ciclo in cui la moltiplicazione è sostituita dal logBasedMultiply, compilando con `gcc -O3 -march=native`. La versione logaritmica pareggia la moltiplicazione standard.
 Il perché è che la moltiplicazione float(un semplice a*b) ha già l'operazione più ottimizzata del processore, infatti viene eseguita da una singola istruzione e nel prodotto tra matrici l'operazione `C += a * b` diventa un'unica istruzione FMA in cui moltiplicazione e somma avvengono insieme, rendendo di fatto la moltiplicazione gratuita, infatti nel file versione32.c in cui non c'è il calcolo matriciale se la compiliamo e la eseguiamo vediamo che i risultati rimangono ottimi. logBasedMultiply invece richiede diverse istruzioni intere per la somma dei bit e la gestione del segno, seguite da una somma float separata. Il risultato è che sulla CPU(nella GPU è ancora da testare, ma prevedo pessime performance) la versione logaritmica può al massimo avvicinarsi allo stato dell'arte, ma non superarlo.
 ### Risultati di prova32bitMat
+```
 Inserisci un numero 1: 2131
 Inserisci un numero 2: 3112
 Inserisci la dimensione N delle matrici: 2048
@@ -12,7 +13,9 @@ Inserisci la dimensione N delle matrici: 2048
 Tempo impiegato standard:    0.898968 secondi
 Tempo impiegato logaritmico: 1.167748 secondi
 Rapporto standard/logaritmico: 0.8x
+```
 ### Risultati prova128bitMat
+```
 ./prova128bitMat
 Inserisci un numero 1: 1233
 Inserisci un numero 2: 1231
@@ -21,6 +24,7 @@ Inserisci la dimensione N delle matrici: 2048
 Tempo impiegato standard:    178.998313 secondi
 Tempo impiegato logaritmico: 87.351225 secondi
 Rapporto standard/logaritmico: 2.0x
+```
 ## Dove l'approccio logaritmico si dimostra efficace
 
 Ho osservato che il metodo diventa vantaggioso in tutte le operazioni per cui la CPU non ha un'unità hardware veloce.
