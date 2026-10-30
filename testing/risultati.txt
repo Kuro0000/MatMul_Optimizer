@@ -1,0 +1,40 @@
+# float a 32 bit
+```
+./test32 
+Inserisci un numero 1: 3214312
+Inserisci un numero 2: 312312
+
+Tempo impiegato standard:    0.003826 secondi
+Tempo impiegato logaritmico: 0.004141 secondi
+Rapporto standard/logaritmico: 0.9x
+```
+# float a 32 bit matrice
+```
+./test32Mat
+Inserisci un numero 1: 43312412
+Inserisci un numero 2: 342141
+Inserisci la dimensione N delle matrici: 2048
+
+Tempo impiegato standard:    1.005496 secondi
+Tempo impiegato logaritmico: 1.561137 secondi
+Rapporto standard/logaritmico: 0.6x
+```
+# float a 128 bit
+./test128
+Inserisci un numero 1: 421312
+Inserisci un numero 2: 312412341
+
+Tempo impiegato standard:    0.048571 secondi
+Tempo impiegato logaritmico: 0.019625 secondi
+Rapporto standard/logaritmico: 2.5x
+
+# Risultati prova128bitMat
+```
+./prova128bitMat
+Inserisci un numero 1: 1233
+Inserisci un numero 2: 1231
+Inserisci la dimensione N delle matrici: 2048
+
+Tempo impiegato standard:    178.998313 secondi
+Tempo impiegato logaritmico: 87.351225 secondi
+Rapporto standard/logaritmico: 2.0x 
