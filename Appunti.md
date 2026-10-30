@@ -32,3 +32,9 @@ Il caso più interessante per noi, che vogliamo implementare la moltiplicaizone 
 Va notato anche un limite importante: l'errore massimo resta l'11%, identico a quello dei 32 bit, perché dipende dall'approssimazione del logaritmo e non dal numero di bit.
 Anche la divisione è un caso favorevole, perché in hardware è molto più lenta della moltiplicazione, mentre con l'approccio logaritmico diventa una sottrazione intera dei bit più il bias.
 Altri contesti in cui l'idea ha senso, non ancora misurati, sono i microcontrollori che non hanno il floating point e sull'hardware dedicato come FPGA e ASIC, dove un sommatore occupa molta meno area rispetto a un moltiplicatore e consuma molta meno energia di un moltiplicatore.
+
+## Problematiche su cui discutere
+L'algoritmo risparmia di più dove l'accuratezza serve, e risparmia poco dove l'accuratezza non serve. 
+Con mantisse larghe (FP32, FP64, FP128) il moltiplicatore è costoso, ma chi usa quei formati vuole risultati esatti. 
+Con mantisse strette (FP8, FP4) l'errore sarebbe tollerabile, ma il moltiplicatore costa già poco.
+Questo farebbe pensare di cambiare focus
