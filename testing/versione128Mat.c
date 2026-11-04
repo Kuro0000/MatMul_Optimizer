@@ -19,15 +19,26 @@ __float128 static inline fast_exp2(__int128 x) {
     return y;
 }
 
+__float128 static casuale(double minimo, double massimo) {
+    const __float128 scala = 1.0Q / ((__float128)RAND_MAX + 1);
+    __float128 u = (((__float128)rand() * scala + (__float128)rand()) * scala + (__float128)rand()) * scala;
+    return (__float128)minimo + ((__float128)massimo - (__float128)minimo) * u;
+}
+
 int main(void) {
-    double numero1, numero2;
+    double minimo, massimo;
     int n;
-    printf("Inserisci un numero 1: ");
-    scanf("%lf", &numero1);
-    printf("Inserisci un numero 2: ");
-    scanf("%lf", &numero2);
+    printf("Inserisci il valore minimo: ");
+    scanf("%lf", &minimo);
+    printf("Inserisci il valore massimo: ");
+    scanf("%lf", &massimo);
     printf("Inserisci la dimensione N delle matrici: ");
     scanf("%d", &n);
+
+    if (minimo <= 0 || massimo <= minimo) {
+        printf("Servono due numeri positivi, con il massimo maggiore del minimo.\n");
+        return 1;
+    }
     __float128 *A = (__float128 *)malloc((size_t)n * n * sizeof(__float128));
     __float128 *B = (__float128 *)malloc((size_t)n * n * sizeof(__float128));
     __float128 *C_normal = (__float128 *)malloc((size_t)n * n * sizeof(__float128));
@@ -36,9 +47,11 @@ int main(void) {
 
     memset(C_normal, 0, (size_t)n * n * sizeof(__float128));
     memset(C_log, 0, (size_t)n * n * sizeof(__float128));
+
+    srand(42);
     for (int i = 0; i < n * n; i++) {
-        A[i] = (__float128)numero1 + ((__float128)(i % 1000) * 0.001Q);
-        B[i] = (__float128)numero2 + ((__float128)(i % 777) * 0.001Q);
+        A[i] = casuale(minimo, massimo);
+        B[i] = casuale(minimo, massimo);
     }
     clock_t start_normal = clock();
     for (int i = 0; i < n; i++) {
@@ -66,6 +79,22 @@ int main(void) {
     printf("\nTempo impiegato standard:    %f secondi\n", tempo_normal);
     printf("Tempo impiegato logaritmico: %f secondi\n", tempo_log);
     printf("Rapporto standard/logaritmico: %.1fx\n", tempo_normal / tempo_log);
+
+
+    double errore_max = 0, errore_somma = 0;
+    int sottostimati = 0;
+    for (int i = 0; i < n * n; i++) {
+        double e = (double)((C_log[i] - C_normal[i]) / C_normal[i]);
+        errore_somma += e;
+        if (e < 0) sottostimati++;
+        double assoluto = e < 0 ? -e : e;
+        if (assoluto > errore_max) errore_max = assoluto;
+    }
+    printf("\n--- ERRORE RELATIVO SULLA MATRICE ---\n");
+    printf("Errore massimo:          %.4f%%\n", 100 * errore_max);
+    printf("Errore medio:            %+.4f%%\n", 100 * errore_somma / ((double)n * n));
+    printf("Elementi sottostimati:   %d su %d\n", sottostimati, n * n);
+
     free(A);
     free(B);
     free(C_normal);

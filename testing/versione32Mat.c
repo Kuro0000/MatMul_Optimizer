@@ -19,15 +19,26 @@ float static inline fast_exp2(int32_t x) {
     return y;
 }
 
+// Numero casuale tra minimo e massimo (calcolato in double e poi convertito in float)
+float static casuale(double minimo, double massimo) {
+    return (float)(minimo + (massimo - minimo) * ((double)rand() / RAND_MAX));
+}
+
 int main(void) {
-    float numero1, numero2;
+    double minimo, massimo;
     int n;
-    printf("Inserisci un numero 1: ");
-    scanf("%f", &numero1);
-    printf("Inserisci un numero 2: ");
-    scanf("%f", &numero2);
+    printf("Inserisci il valore minimo: ");
+    scanf("%lf", &minimo);
+    printf("Inserisci il valore massimo: ");
+    scanf("%lf", &massimo);
     printf("Inserisci la dimensione N delle matrici: ");
     scanf("%d", &n);
+    // Il metodo vale solo per numeri positivi. Per coprire tutte le mantisse
+    // il massimo dovrebbe essere almeno il doppio del minimo (es. 1 e 1000)
+    if (minimo <= 0 || massimo <= minimo) {
+        printf("Servono due numeri positivi, con il massimo maggiore del minimo.\n");
+        return 1;
+    }
     float *A = (float *)malloc((size_t)n * n * sizeof(float));
     float *B = (float *)malloc((size_t)n * n * sizeof(float));
     float *C_normal = (float *)malloc((size_t)n * n * sizeof(float));
@@ -36,9 +47,11 @@ int main(void) {
 
     memset(C_normal, 0, (size_t)n * n * sizeof(float));
     memset(C_log, 0, (size_t)n * n * sizeof(float));
+    // Input casuali: con valori quasi uguali si misurerebbe l'errore di una sola coppia di mantisse
+    srand(42);   // stesso seme: dati identici a ogni esecuzione
     for (int i = 0; i < n * n; i++) {
-        A[i] = numero1 + ((float)(i % 1000) * 0.001f);
-        B[i] = numero2 + ((float)(i % 777) * 0.001f);
+        A[i] = casuale(minimo, massimo);
+        B[i] = casuale(minimo, massimo);
     }
     clock_t start_normal = clock();
     for (int i = 0; i < n; i++) {
@@ -66,6 +79,23 @@ int main(void) {
     printf("\nTempo impiegato standard:    %f secondi\n", tempo_normal);
     printf("Tempo impiegato logaritmico: %f secondi\n", tempo_log);
     printf("Rapporto standard/logaritmico: %.1fx\n", tempo_normal / tempo_log);
+
+    // --- CALCOLO DELL'ERRORE RELATIVO SULLA MATRICE: (logaritmico - standard) / standard ---
+    // Ogni elemento di C e' una somma di n prodotti, quindi l'errore va calcolato sul risultato finale
+    double errore_max = 0, errore_somma = 0;
+    int sottostimati = 0;
+    for (int i = 0; i < n * n; i++) {
+        double e = ((double)C_log[i] - C_normal[i]) / C_normal[i];
+        errore_somma += e;
+        if (e < 0) sottostimati++;
+        double assoluto = e < 0 ? -e : e;
+        if (assoluto > errore_max) errore_max = assoluto;
+    }
+    printf("\n--- ERRORE RELATIVO SULLA MATRICE ---\n");
+    printf("Errore massimo:          %.4f%%\n", 100 * errore_max);
+    printf("Errore medio:            %+.4f%%\n", 100 * errore_somma / ((double)n * n));
+    printf("Elementi sottostimati:   %d su %d\n", sottostimati, n * n);
+
     free(A);
     free(B);
     free(C_normal);

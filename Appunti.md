@@ -38,3 +38,5 @@ L'algoritmo risparmia di più dove l'accuratezza serve, e risparmia poco dove l'
 Con mantisse larghe (FP32, FP64, FP128) il moltiplicatore è costoso, ma chi usa quei formati vuole risultati esatti. 
 Con mantisse strette (FP8, FP4) l'errore sarebbe tollerabile, ma il moltiplicatore costa già poco.
 Questo farebbe pensare di cambiare focus
+
+
