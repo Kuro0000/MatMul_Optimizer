@@ -37,6 +37,5 @@ Altri contesti in cui l'idea ha senso, non ancora misurati, sono i microcontroll
 L'algoritmo risparmia di più dove l'accuratezza serve, e risparmia poco dove l'accuratezza non serve. 
 Con mantisse larghe (FP32, FP64, FP128) il moltiplicatore è costoso, ma chi usa quei formati vuole risultati esatti. 
 Con mantisse strette (FP8, FP4) l'errore sarebbe tollerabile, ma il moltiplicatore costa già poco.
-Questo farebbe pensare di cambiare focus
-
-
+Possiamo per questa problematica pensare a un contesto in cui la precisione dei risultati non è importante, ma l'uso delle risorse è fondamentale dato che la moltiplicazione occupa più risorse rispetto alla somma.
+Ad esempio si potrebbe pensare di utilizzare questo algoritmo sulle FPGA.
