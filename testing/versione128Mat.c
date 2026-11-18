@@ -4,16 +4,29 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define BIAS_128 ((__int128)16383 << 112)
+#include <math.h>
 
-__int128 static inline fast_log2(__float128 x) {
-    __int128 i;
-    memcpy(&i, &x, sizeof i);
-    return i - BIAS_128;
+#define BIAS_128 ((__int128)16383 << 112)
+#define K 15
+
+static __int128 Elog[1 << K], Eexp[1 << K];
+
+void init_tables(void) {
+    for (int i = 0; i < (1 << K); i++) {
+        double x = (i + 0.5) / (1 << K);              // centro della cella
+        Elog[i] = (__int128)round(ldexp(log2(1.0 + x) - x, 112));
+        Eexp[i] = (__int128)round(ldexp(exp2(x) - 1.0 - x, 112));
+    }
 }
 
-__float128 static inline fast_exp2(__int128 x) {
-    __int128 i = x + BIAS_128;
+static inline __int128 fast_log2(__float128 x) {
+    __int128 i;
+    memcpy(&i, &x, sizeof i);
+    return (i - BIAS_128) + Elog[((unsigned __int128)i >> (112 - K)) & ((1 << K) - 1)];
+}
+
+static inline __float128 fast_exp2(__int128 L) {
+    __int128 i = L + BIAS_128 + Eexp[((unsigned __int128)L >> (112 - K)) & ((1 << K) - 1)];
     __float128 y;
     memcpy(&y, &i, sizeof y);
     return y;
@@ -28,6 +41,7 @@ __float128 static casuale(double minimo, double massimo) {
 int main(void) {
     double minimo, massimo;
     int n;
+    init_tables();
     printf("Inserisci il valore minimo: ");
     scanf("%lf", &minimo);
     printf("Inserisci il valore massimo: ");
