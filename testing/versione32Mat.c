@@ -3,19 +3,29 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define BIAS_32 ((int32_t)127 << 23)
+#define K 8
 
-int32_t static inline fast_log2(float x) {
-    int32_t i;
-    memcpy(&i, &x, sizeof i);
-    return i - BIAS_32;
+static int32_t Elog[1 << K], Eexp[1 << K];
+
+void init_tables(void) {
+    for (int i = 0; i < (1 << K); i++) {
+        double x = (i + 0.5) / (1 << K);              // centro della cella
+        Elog[i] = (int32_t)lround((log2(1 + x) - x) * (1 << 23));
+        Eexp[i] = (int32_t)lround((exp2(x) - 1 - x) * (1 << 23));
+    }
 }
 
-float static inline fast_exp2(int32_t x) {
-    int32_t i = x + BIAS_32;
-    float y;
-    memcpy(&y, &i, sizeof y);
+static inline int32_t fast_log2(float x) {
+    int32_t i; memcpy(&i, &x, sizeof i);
+    return (i - BIAS_32) + Elog[(i >> (23 - K)) & ((1 << K) - 1)];
+}
+
+static inline float fast_exp2(int32_t L) {
+    int32_t i = L + BIAS_32 + Eexp[(L >> (23 - K)) & ((1 << K) - 1)];
+    float y; memcpy(&y, &i, sizeof y);
     return y;
 }
 
@@ -27,6 +37,8 @@ float static casuale(double minimo, double massimo) {
 int main(void) {
     double minimo, massimo;
     int n;
+    init_tables();
+    
     printf("Inserisci il valore minimo: ");
     scanf("%lf", &minimo);
     printf("Inserisci il valore massimo: ");
