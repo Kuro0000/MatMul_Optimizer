@@ -67,3 +67,6 @@ Rapporto standard/logaritmico: 1.4x
 Errore massimo:          0.0000%
 Errore medio:            +0.0000%
 Elementi sottostimati:   2080934 su 4194304
+
+
+#
