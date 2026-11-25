@@ -39,3 +39,31 @@ Con mantisse larghe (FP32, FP64, FP128) il moltiplicatore è costoso, ma chi usa
 Con mantisse strette (FP8, FP4) l'errore sarebbe tollerabile, ma il moltiplicatore costa già poco.
 Possiamo per questa problematica pensare a un contesto in cui la precisione dei risultati non è importante, ma l'uso delle risorse è fondamentale dato che la moltiplicazione occupa più risorse rispetto alla somma.
 Ad esempio si potrebbe pensare di utilizzare questo algoritmo sulle FPGA.
+
+## versione migliorata del 18/11
+./test128
+Inserisci il valore minimo: 12
+Inserisci il valore massimo: 1234124325
+
+Tempo impiegato standard:      0.028375 secondi
+Tempo impiegato logaritmico:   0.006808 secondi
+Rapporto standard/logaritmico: 4.2x
+
+--- ERRORE RELATIVO ---
+Errore massimo:          0.001268%
+Errore medio:            +0.000000%
+Risultati sottostimati:  999622 su 2000000
+
+./test128Mat
+Inserisci il valore minimo: 12
+Inserisci il valore massimo: 1231
+Inserisci la dimensione N delle matrici: 2048
+
+Tempo impiegato standard:    188.580803 secondi
+Tempo impiegato logaritmico: 133.120169 secondi
+Rapporto standard/logaritmico: 1.4x
+
+--- ERRORE RELATIVO SULLA MATRICE ---
+Errore massimo:          0.0000%
+Errore medio:            +0.0000%
+Elementi sottostimati:   2080934 su 4194304
