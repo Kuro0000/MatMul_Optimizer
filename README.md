@@ -21,4 +21,20 @@ float Q_rsqrt( float number )
 ```
 ## Idea
 Sfruttare le caratteristiche dello standard IEEE 754, in cui i bit di un numero floating point, letti come intero, rappresentano già (a meno di una scala e di uno spostamento) il suo logaritmo in base 2. In questo modo si può usare la proprietà dei logaritmi per cui la moltiplicazione diventa una somma: invece di moltiplicare due numeri si sommano i loro bit come interi.
-L'obiettivo del progetto è usare questa operazione per rendere più efficiente la moltiplicazione matriciale, e capire in quali condizioni e su quale hardware il trucco conviene davvero rispetto alla moltiplicazione standard.
+L'obiettivo del progetto è capire quando conviene davvero sostituire un'operazione floating point con il trucco dei bit, su CPU e su GPU, e perché
+
+## Struttura del progetto
+
+### Fondamenti
+IEEE 754, i bit come log2, cosa diventa ogni operazione, errore al variare di K, casi limite.
+### Studio CPU: moltiplicazione e moltiplicazione tra matrici(Modulo 1)
+perde su CPU e GPU con formati previsti dalla FMA. FP128 è il caso "vince ma perde precisione", spiegando come abbiamo cercato di diminuire l'errore.
+### Studio GPU: algoritmo da definire assieme(Modulo 2)
+Con il supporto FMA nativo in ogni CUDA core, il trucco dei logaritmi è meno preciso e meno efficiente dell'approccio standard.
+1. Moltiplicazione matriciale: con l'FMA in ogni CUDA core il trucco perde
+2. Algoritmo principale in cui la SFU che opera log2 oppure exp2 è il collo di bottiglia.
+3. Ipotesi: il trucco non accelera la SFU, ma le toglie lavoro spostandolo sulla pipeline intera. Le due unità lavorano in parallelo.
+4. Le tappe implementative parte da una versione naive in CUDA, con progressivamente delle ottimizzazioni. 
+  A ogni passo analisi con Nsight Compute;
+### Conclusioni
+Tabella conclusiva
