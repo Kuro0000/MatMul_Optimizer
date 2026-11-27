@@ -16,9 +16,7 @@ Nello standard **IEEE 754 a singola precisione (32 bit)**, un numero `float` è 
 
 * **Mantissa ($`m`$):** sono i 23 bit dopo la virgola di un numero binario normalizzato del tipo $`1.\text{xxxxxxx}_2`$. Il suo valore reale frazionario è:
 
-  ```math
-  M = \frac{m}{2^{23}} \in [0, 1)
-  ```
+  $`\displaystyle M = \frac{m}{2^{23}} \in [0, 1)`$
 
 Per qualsiasi numero normalizzato ($`1 \le E \le 254`$), il valore reale rappresentato è:
 
@@ -148,9 +146,7 @@ Consideriamo i parametri del codice: $`K = 7`$, $`N_T = 128`$, $`2^{23} = 8\,388
 
    * Letto come intero:
 
-     ```math
-     I_d = 129 \cdot 2^{23} + 4\,194\,304 = 1\,082\,130\,432 + 4\,194\,304 = 1\,086\,324\,736
-     ```
+     $`\displaystyle I_d = 129 \cdot 2^{23} + 4\,194\,304 = 1\,082\,130\,432 + 4\,194\,304 = 1\,086\,324\,736`$
 
      *(in esadecimale: `0x40C00000`)*.
 
@@ -158,31 +154,23 @@ Consideriamo i parametri del codice: $`K = 7`$, $`N_T = 128`$, $`2^{23} = 8\,388
 
    * I $`K = 7`$ bit più alti della mantissa ($`M = 0.5 = 0.1000000_2`$) danno l'indice:
 
-     ```math
-     i = 64
-     ```
+     $`\displaystyle i = 64`$
 
    * Il centro della cella $`64`$ è $`x_{64} = \frac{64.5}{128} \approx 0.503906`$.
 
    * L'errore precalcolato in quella cella è:
 
-     ```math
-     \text{corr} = \text{round}\big((\log_2(1.503906) - 0.503906) \cdot 2^{23}\big) = \text{round}(0.084962 \cdot 8\,388\,608) = 712\,717
-     ```
+     $`\displaystyle \text{corr} = \text{round}\big((\log_2(1.503906) - 0.503906) \cdot 2^{23}\big) = \text{round}(0.084962 \cdot 8\,388\,608) = 712\,717`$
 
    * Quindi $`\text{tab\_log}[64] = 712\,717 - 1\,065\,353\,216 = -1\,064\,640\,499`$.
 
 3. **Somma finale e verifica:**
 
-   ```math
-   L = I_d + \text{tab\_log}[64] = 1\,086\,324\,736 - 1\,064\,640\,499 = 21\,684\,237
-   ```
+   $`\displaystyle L = I_d + \text{tab\_log}[64] = 1\,086\,324\,736 - 1\,064\,640\,499 = 21\,684\,237`$
 
    Dividendo per $`2^{23}`$ per leggere il risultato reale:
 
-   ```math
-   \frac{21\,684\,237}{8\,388\,608} \approx \mathbf{2.584962}
-   ```
+   $`\displaystyle \frac{21\,684\,237}{8\,388\,608} \approx \mathbf{2.584962}`$
 
    *(Il valore esatto di $`\log_2(6)`$ è $`\mathbf{2.5849625}`$: l'errore è inferiore a $`10^{-6}`$!).*
 
@@ -196,15 +184,11 @@ Partiamo dal valore $`L = 21\,684\,237`$ appena trovato per $`\log_2(6.0)`$.
 
    * Calcoliamo $`q = \lfloor (L \cdot P) / 2^{32} \rfloor`$:
 
-     ```math
-     q = \left\lfloor \frac{21\,684\,237 \cdot 134\,217\,728}{4\,294\,967\,296} \right\rfloor = \lfloor 677\,632.4 \rfloor = 677\,632
-     ```
+     $`\displaystyle q = \left\lfloor \frac{21\,684\,237 \cdot 134\,217\,728}{4\,294\,967\,296} \right\rfloor = \lfloor 677\,632.4 \rfloor = 677\,632`$
 
    * Riportiamo alla scala $`2^{23}`$ moltiplicando per $`16`$:
 
-     ```math
-     L_p = 677\,632 \cdot 16 = 10\,842\,112
-     ```
+     $`\displaystyle L_p = 677\,632 \cdot 16 = 10\,842\,112`$
 
      *(Nota: $`10\,842\,112 / 2^{23} \approx 1.29248`$, che è esattamente $`\frac{1}{2}\log_2(6)`$).*
 
@@ -212,25 +196,19 @@ Partiamo dal valore $`L = 21\,684\,237`$ appena trovato per $`\log_2(6.0)`$.
 
    * Estraiamo i $`K = 7`$ bit più alti della parte frazionaria di $`L_p`$ (i bit dal 22 al 16 di $`L_p`$):
 
-     ```math
-     j = (10\,842\,112 \gg 16) \ \& \ 127 = 165 \ \& \ 127 = 37
-     ```
+     $`\displaystyle j = (10\,842\,112 \gg 16) \ \& \ 127 = 165 \ \& \ 127 = 37`$
 
    * Il centro della cella $`37`$ è $`x_{37} = \frac{37.5}{128} \approx 0.292969`$.
 
    * La correzione dell'esponenziale in quella cella è:
 
-     ```math
-     \text{corr}_{\exp} = \text{round}\big((2^{0.292969} - 1 - 0.292969) \cdot 2^{23}\big) = \text{round}(-0.067799 \cdot 8\,388\,608) = -568\,743
-     ```
+     $`\displaystyle \text{corr}_{\exp} = \text{round}\big((2^{0.292969} - 1 - 0.292969) \cdot 2^{23}\big) = \text{round}(-0.067799 \cdot 8\,388\,608) = -568\,743`$
 
    * Quindi $`\text{tab\_exp}[37] = -568\,743 + 1\,065\,353\,216 = 1\,064\,784\,473`$.
 
 3. **Ricostruzione del `float` risultato:**
 
-   ```math
-   I_{\text{out}} = L_p + \text{tab\_exp}[37] = 10\,842\,112 + 1\,064\,784\,473 = 1\,075\,626\,585
-   ```
+   $`\displaystyle I_{\text{out}} = L_p + \text{tab\_exp}[37] = 10\,842\,112 + 1\,064\,784\,473 = 1\,075\,626\,585`$
 
    Interpretando $`1\,075\,626\,585`$ (`0x401CFFFF` circa) come `float` IEEE 754:
 
@@ -240,8 +218,6 @@ Partiamo dal valore $`L = 21\,684\,237`$ appena trovato per $`\log_2(6.0)`$.
 
    * Valore finale:
 
-     ```math
-     y = (1 + 0.224681) \cdot 2^1 \approx \mathbf{2.44936}
-     ```
+     $`\displaystyle y = (1 + 0.224681) \cdot 2^1 \approx \mathbf{2.44936}`$
 
    *(Il valore esatto di $`\sqrt{6}`$ è $`\mathbf{2.44949}`$: abbiamo ottenuto il risultato corretto fino alla quarta cifra decimale usando solo 3 somme, 1 moltiplicazione intera e 2 letture in tabella).*
